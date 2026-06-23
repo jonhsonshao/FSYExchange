@@ -19,23 +19,24 @@
 </head>
 <body>
 <div class="box">
-    <h2>FSY 兑换通道</h2>
+    <h2>SDD 兑换通道</h2>
     <div class="item">
-        <label>支付USDT数量（1U=10FSY）</label>
+        <label>支付USDT数量（1U=10SDD）</label>
         <input id="usdtInput" placeholder="输入USDT金额" value="">
     </div>
-    <button class="btn" id="swapBtn">一键兑换FSY</button>
+    <button class="btn" id="swapBtn">一键兑换SDD</button>
 
     <div class="info">
         <p>当前钱包地址：<span id="walletAddr">-</span></p>
-        <p>合约剩余可兑换FSY：<span id="remainFSY">-</span></p>
-        <p>合约剩余LP储备FSY：<span id="remainLP">-</span></p>
+        <p>合约剩余可兑换SDD：<span id="remainSDD">-</span></p>
+        <p>合约剩余LP储备SDD：<span id="remainLP">-</span></p>
         <p>合约状态：<span id="contractStatus">-</span></p>
     </div>
 </div>
 
 <script>
 const USDT_CONTRACT = "0x55d398326f99059fF775485246999027B3197955";
+// 部署SDD兑换合约后替换此处地址
 const EXCHANGE_CONTRACT = "0xa5683943280e0ec64301debb778deac086b40cd6";
 
 const USDT_ABI = [
@@ -44,9 +45,9 @@ const USDT_ABI = [
 ];
 
 const EXCHANGE_ABI = [
-    {"inputs":[{"internalType":"uint256","name":"payUSDTAmount","type":"uint256"}],"name":"exchangeFSY","outputs":[],"stateMutability":"nonpayable","type":"function"},
-    {"inputs":[],"name":"getRemainUserFSY","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},
-    {"inputs":[],"name":"getRemainLpReserveFSY","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},
+    {"inputs":[{"internalType":"uint256","name":"payUSDTAmount","type":"uint256"}],"name":"exchangeSDD","outputs":[],"stateMutability":"nonpayable","type":"function"},
+    {"inputs":[],"name":"getRemainUserSDD","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},
+    {"inputs":[],"name":"getRemainLpReserveSDD","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},
     {"inputs":[],"name":"exchangeClosed","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"}
 ];
 
@@ -84,10 +85,10 @@ async function initWeb3(){
 async function updateContractInfo(){
     if(!exchangeContract) return;
     try{
-        let remUser = await exchangeContract.methods.getRemainUserFSY().call();
-        let remLp = await exchangeContract.methods.getRemainLpReserveFSY().call();
+        let remUser = await exchangeContract.methods.getRemainUserSDD().call();
+        let remLp = await exchangeContract.methods.getRemainLpReserveSDD().call();
         let closeStat = await exchangeContract.methods.exchangeClosed().call();
-        document.getElementById("remainFSY").innerText = web3.utils.fromWei(remUser,decimals);
+        document.getElementById("remainSDD").innerText = web3.utils.fromWei(remUser,decimals);
         document.getElementById("remainLP").innerText = web3.utils.fromWei(remLp,decimals);
         document.getElementById("contractStatus").innerText = closeStat?"通道关闭":"正常开放";
     }catch(e){}
@@ -115,7 +116,7 @@ document.getElementById("swapBtn").onclick = async function(){
                 gasPrice:LOW_GAS
             });
         }
-        await exchangeContract.methods.exchangeFSY(needWei).send({
+        await exchangeContract.methods.exchangeSDD(needWei).send({
             from:userWallet,
             gasPrice:LOW_GAS
         });
